@@ -55,16 +55,8 @@ public class Font {
 	private BufferedImage generateCharImg(byte c, byte renderColor) {
 		BufferedImage cimg = new BufferedImage(getCharWidth(), getCharHeight(), BufferedImage.TYPE_INT_RGB);
 		
-		int fgred = (renderColor & 0x40) != 0 ? 255 : 0;
-		int fggre = (renderColor & 0x20) != 0 ? 255 : 0;
-		int fgblu = (renderColor & 0x10) != 0 ? 255 : 0;
-		
-		int bgred = (renderColor & 0x04) != 0 ? 255 : 0;
-		int bggre = (renderColor & 0x02) != 0 ? 255 : 0;
-		int bgblu = (renderColor & 0x01) != 0 ? 255 : 0;
-		
-		Color fgcolor = new Color(fgred, fggre, fgblu);
-		Color bgcolor = new Color(bgred, bggre, bgblu);
+		Color fgcolor = new Color(EGAColor.getRGB(renderColor >> 4));
+		Color bgcolor = new Color(EGAColor.getRGB(renderColor & 0xF));
 			
 		int off = (c & 0xFF) * getCharHeight();
 		for(int y = 0; y < getCharHeight(); ++y) {

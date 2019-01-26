@@ -30,7 +30,7 @@ public class SlideEditor extends JTextArea implements KeyListener {
 	private boolean showCursor = true;
 	private int cursor_col = 0;
 	private int cursor_row = 0;
-	private byte fgColor = (byte)0x7;
+	private byte fgColor = (byte)0xF;
 	private byte bgColor = (byte)0x0;
 	
 
@@ -72,11 +72,11 @@ public class SlideEditor extends JTextArea implements KeyListener {
 	}
 	
 	public void setFgColor(byte b) {
-		fgColor = (byte)(b & 0x7);
+		fgColor = (byte)(b & 0xF);
 	}
 	
 	public void setBgColor(byte b) {
-		bgColor = (byte)(b & 0x7);
+		bgColor = (byte)(b & 0xF);
 	}
 	
 	private byte assembleColor() {
@@ -131,7 +131,7 @@ public class SlideEditor extends JTextArea implements KeyListener {
 	
 	public BufferedImage getFontImage(byte character) {
 		if(slide != null && slide.getFont() != null) {
-			return slide.getFont().getCharImg(character, (byte)0x70);
+			return slide.getFont().getCharImg(character, (byte)0xF0);
 		}
 		return null;
 	}

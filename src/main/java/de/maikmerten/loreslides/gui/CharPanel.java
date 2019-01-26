@@ -38,12 +38,20 @@ public class CharPanel extends JPanel {
 			NibbleColor.COLOR4,
 			NibbleColor.COLOR5,
 			NibbleColor.COLOR6,
-			NibbleColor.COLOR7
+			NibbleColor.COLOR7,
+			NibbleColor.COLOR8,
+			NibbleColor.COLOR9,
+			NibbleColor.COLOR10,
+			NibbleColor.COLOR11,
+			NibbleColor.COLOR12,
+			NibbleColor.COLOR13,
+			NibbleColor.COLOR14,
+			NibbleColor.COLOR15,
 		};
 		fgColorBox = new JComboBox(fgcolors);
 		fgColorBox.setFocusable(false);
 		fgColorBox.setRenderer(new ColorListCellRenderer("Text color"));
-		fgColorBox.setSelectedIndex(7);
+		fgColorBox.setSelectedIndex(15);
 		
 		fgColorBox.addActionListener(new ActionListener() {
 			@Override
