@@ -84,9 +84,11 @@ public class Slide {
 		baos.write(ByteUtil.writeInt(rows));
 		baos.write(ByteUtil.writeInt(flags));
 		baos.write(ByteUtil.writeInt(flagdata));
-		
-		baos.write(text);
-		baos.write(color);
+                
+                for(int i = 0; i < text.length; ++i) {
+                    baos.write(text[i]);
+                    baos.write(color[i]);
+                }
 		
 		return baos.toByteArray();
 	}
@@ -109,10 +111,15 @@ public class Slide {
 		off += 4;
 		
 		int len = cols * rows;
-		byte[] text = ByteUtil.readByteArray(data, off, len);
-		off += len;
-		
-		byte[] color = ByteUtil.readByteArray(data, off, len);
+                byte[] slidedata = ByteUtil.readByteArray(data, off, len * 2);
+                
+		byte[] text = new byte[len];
+		byte[] color = new byte[len];
+                
+                for(int i = 0; i < len; ++i) {
+                    text[i] = slidedata[i * 2];
+                    color[i] = slidedata[(i * 2) + 1];
+                }
 		
 		Slide s = new Slide(sh, fontId, cols, rows);
 		s.flags = flags;
