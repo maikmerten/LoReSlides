@@ -62,7 +62,7 @@ public class SlideHolder implements ListModel<Slide>{
 	}
 	
 	public void addSlide() {
-		Slide s = new Slide(this, fonts.get(0).getId(), 40, 25);
+		Slide s = new Slide(this, fonts.get(0).getId(), 40, 30);
 		addSlide(s);
 	}
 	

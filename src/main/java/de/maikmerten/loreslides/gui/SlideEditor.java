@@ -25,7 +25,7 @@ public class SlideEditor extends JTextArea implements KeyListener {
 
 	private Slide slide;
 	private int zoom = 2;
-	private double vertical_stretch = 1.2; // 1.2 for 640x400
+	private double vertical_stretch = 1.0; // 1.0 for 640x480, 1.2 for 640x400
 	private boolean showGrid = true;
 	private boolean showCursor = true;
 	private int cursor_col = 0;
