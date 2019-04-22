@@ -18,8 +18,8 @@ import javax.swing.event.ListDataListener;
  */
 public class SlideHolder implements ListModel<Slide>{
 	
-	private List<Font> fonts = new ArrayList<>();
-	private List<Slide> slides = new ArrayList<>();
+	private final List<Font> fonts = new ArrayList<>();
+	private final List<Slide> slides = new ArrayList<>();
 	int position = 0;
 	
 	// ListModel stuff
@@ -61,7 +61,7 @@ public class SlideHolder implements ListModel<Slide>{
 		checkPosition();
 	}
 	
-	public void addSlide() {
+	public final void addSlide() {
 		Slide s = new Slide(this, fonts.get(0).getId(), 40, 30);
 		addSlide(s);
 	}
@@ -148,7 +148,12 @@ public class SlideHolder implements ListModel<Slide>{
 		}
 		
 		for(Slide s : slides) {
-			DirEntry dentry = new DirEntry(DirEntry.TYPE_SLIDE, 0, offset);
+			DirEntry dentry;
+			if(s.isGraphics()) {
+				dentry = new DirEntry(DirEntry.TYPE_GRAPHICS, 0, offset);
+			} else {
+				dentry = new DirEntry(DirEntry.TYPE_SLIDE, 0, offset);
+			}
 			dir.addEntry(dentry);
 			byte[] dat = s.toBytes();
 			entrydata.add(dat);
@@ -185,7 +190,10 @@ public class SlideHolder implements ListModel<Slide>{
 				Font f = Font.fromBytes(data, entry.off);
 				fonts.add(f);
 			} else if(entry.type == DirEntry.TYPE_SLIDE) {
-				Slide s = Slide.fromBytes(data, entry.off, this);
+				Slide s = Slide.fromBytes(data, entry.off, this, DirEntry.TYPE_SLIDE);
+				slides.add(s);
+			} else if(entry.type == DirEntry.TYPE_GRAPHICS) {
+				Slide s = Slide.fromBytes(data, entry.off, this, DirEntry.TYPE_GRAPHICS);
 				slides.add(s);
 			}
 		}

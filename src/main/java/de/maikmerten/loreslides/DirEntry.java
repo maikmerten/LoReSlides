@@ -11,6 +11,7 @@ public class DirEntry {
 	
 	public static byte TYPE_FONT = (byte)(0x00);
 	public static byte TYPE_SLIDE = (byte)(0x01);
+	public static byte TYPE_GRAPHICS = (byte)(0x02);
 	
 	byte type;
 	int id;

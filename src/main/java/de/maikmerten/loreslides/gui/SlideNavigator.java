@@ -1,5 +1,6 @@
 package de.maikmerten.loreslides.gui;
 
+import de.maikmerten.loreslides.DirEntry;
 import de.maikmerten.loreslides.Slide;
 import de.maikmerten.loreslides.SlideHolder;
 import java.awt.BorderLayout;
@@ -91,7 +92,8 @@ public class SlideNavigator extends JPanel implements ListDataListener {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					Slide template = sh.getCurrentSlide();
-					Slide newslide = Slide.fromBytes(template.toBytes(), 0, sh);
+					int type = template.isGraphics() ? DirEntry.TYPE_GRAPHICS : DirEntry.TYPE_SLIDE;
+					Slide newslide = Slide.fromBytes(template.toBytes(), 0, sh, type);
 					sh.addSlide(newslide);
 				} catch (IOException ex) {
 					throw new RuntimeException(ex);
