@@ -33,6 +33,8 @@ public class SlideEditor extends JTextArea implements KeyListener {
 	private int cursor_row = 0;
 	private byte fgColor = (byte) 0xF;
 	private byte bgColor = (byte) 0x0;
+	
+	private Font fallbackFont = new Font();
 
 	private final LinkedList<Byte> undoBuffer = new LinkedList<>();
 
@@ -140,7 +142,7 @@ public class SlideEditor extends JTextArea implements KeyListener {
 		if (slide != null && slide.getFont() != null) {
 			return slide.getFont().getCharImg(character, (byte) 0xF0);
 		}
-		return null;
+		return fallbackFont.getCharImg(character, (byte) 0xF0);
 	}
 
 	private int getCharWidth() {

@@ -1,7 +1,9 @@
 package de.maikmerten.loreslides;
 
 import de.maikmerten.loreslides.graphics.ImageConverter;
+import de.maikmerten.loreslides.graphics.RLECoder;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -136,10 +138,12 @@ public class Slide {
 
 	private byte[] graphicsToBytes() throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
+		byte[] compressed = RLECoder.encode(graphicsdata);
+		
 		baos.write(ByteUtil.writeInt(graphicswidth));
 		baos.write(ByteUtil.writeInt(graphicsheight));
-		baos.write(graphicsdata);
+		baos.write(ByteUtil.writeInt(compressed.length));
+		baos.write(compressed);
 
 		return baos.toByteArray();
 	}
@@ -157,8 +161,12 @@ public class Slide {
 
 		int height = ByteUtil.readInt(data, off);
 		off += 4;
+		
+		int compressedlen = ByteUtil.readInt(data, off);
+		off += 4;
 
-		byte[] graphicsdata = ByteUtil.readByteArray(data, off, (width * height) / 2);
+		byte[] graphicsdata = ByteUtil.readByteArray(data, off, compressedlen);
+		graphicsdata = RLECoder.decode(new ByteArrayInputStream(graphicsdata));
 
 		return new Slide(sh, width, height, graphicsdata);
 	}
