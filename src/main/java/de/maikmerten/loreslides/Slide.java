@@ -127,11 +127,13 @@ public class Slide {
 		baos.write(ByteUtil.writeInt(rows));
 		baos.write(ByteUtil.writeInt(flags));
 		baos.write(ByteUtil.writeInt(flagdata));
-
-		for (int i = 0; i < text.length; ++i) {
-			baos.write(text[i]);
-			baos.write(color[i]);
-		}
+                
+                byte[] compressedText = RLECoder.encode(text);
+                byte[] compressedColor = RLECoder.encode(color);
+                baos.write(ByteUtil.writeInt(compressedText.length));
+                baos.write(ByteUtil.writeInt(compressedColor.length));
+                baos.write(compressedText);
+                baos.write(compressedColor);
 
 		return baos.toByteArray();
 	}
@@ -187,17 +189,21 @@ public class Slide {
 
 		int flagdata = ByteUtil.readInt(data, off);
 		off += 4;
+                
+                int textLen = ByteUtil.readInt(data, off);
+                off += 4;
+                
+                int colorLen = ByteUtil.readInt(data, off);
+                off += 4;
 
-		int len = cols * rows;
-		byte[] slidedata = ByteUtil.readByteArray(data, off, len * 2);
-
-		byte[] text = new byte[len];
-		byte[] color = new byte[len];
-
-		for (int i = 0; i < len; ++i) {
-			text[i] = slidedata[i * 2];
-			color[i] = slidedata[(i * 2) + 1];
-		}
+		byte[] text = ByteUtil.readByteArray(data, off, textLen);
+                off += textLen;
+                
+                byte[] color = ByteUtil.readByteArray(data, off, colorLen);
+                
+                text = RLECoder.decode(text);
+                color = RLECoder.decode(color);
+                
 
 		Slide s = new Slide(sh, fontId, cols, rows);
 		s.flags = flags;

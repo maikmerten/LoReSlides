@@ -91,6 +91,10 @@ public class RLECoder {
 
 		return result;
 	}
+        
+        public static byte[] decode(byte[] input) {
+            return decode(new ByteArrayInputStream(input));
+        }
 
 	public static byte[] decode(InputStream is) {
 		try {
