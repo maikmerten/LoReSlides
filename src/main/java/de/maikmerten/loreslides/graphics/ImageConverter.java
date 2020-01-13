@@ -3,6 +3,10 @@ package de.maikmerten.loreslides.graphics;
 import de.maikmerten.loreslides.EGAColor;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.awt.image.IndexColorModel;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -16,7 +20,7 @@ public class ImageConverter {
     public ImageConverter() {
         loadDefaultPalette();
     }
-    
+
     public final void loadDefaultPalette() {
         for (int idx = 0; idx < palette.length; ++idx) {
             palette[idx] = EGAColor.getRGB(idx);
@@ -103,7 +107,7 @@ public class ImageConverter {
     }
 
     private int[] unpackBytes(byte[] input) {
-        
+
         // first 48 bytes: 16 color palette
         for (int i = 0; i < 16; ++i) {
             byte r = input[(i * 3)];
@@ -113,10 +117,10 @@ public class ImageConverter {
             int rgb = ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | (b & 0xFF);
             setPaletteEntry(i, rgb);
         }
-        
+
         // rest: pixel data
         int pixels = (input.length - 48) * 2;
-        
+
         int[] result = new int[pixels];
         int result_idx = 0;
         for (int i = 48; i < input.length; ++i) {
@@ -128,6 +132,35 @@ public class ImageConverter {
     }
 
     public byte[] convertImage(BufferedImage input, int width, int height) {
+        loadDefaultPalette();
+
+        // check if image already has a color palette of up to 16 colors
+        if (input.getColorModel() instanceof IndexColorModel) {
+            IndexColorModel icm = (IndexColorModel) input.getColorModel();
+
+            int[] tmpPalette = new int[256];
+            icm.getRGBs(tmpPalette);
+
+            if (input.getRaster().getDataBuffer() instanceof DataBufferByte) {
+                DataBufferByte dbuf = (DataBufferByte) input.getRaster().getDataBuffer();
+                
+                // count used palette colors
+                Set<Integer> colors = new HashSet<>();
+                for (byte b : dbuf.getData()) {
+                    int idx = b & 0xFF;
+                    colors.add(tmpPalette[idx] & 0xFFFFFF);
+                }
+
+                if (colors.size() <= 16) {
+                    // this is an image with up to 16 colors, we can use this palette
+                    int i = 0;
+                    for(int rgb : colors) {
+                        setPaletteEntry(i++, rgb);
+                    }
+                }
+            }
+        }
+
         // create scaled copy
         BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics g = img.getGraphics();
