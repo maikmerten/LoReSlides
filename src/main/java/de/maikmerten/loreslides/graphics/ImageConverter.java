@@ -136,27 +136,20 @@ public class ImageConverter {
 
         // check if image already has a color palette of up to 16 colors
         if (input.getColorModel() instanceof IndexColorModel) {
-            IndexColorModel icm = (IndexColorModel) input.getColorModel();
-
-            int[] tmpPalette = new int[256];
-            icm.getRGBs(tmpPalette);
-
-            if (input.getRaster().getDataBuffer() instanceof DataBufferByte) {
-                DataBufferByte dbuf = (DataBufferByte) input.getRaster().getDataBuffer();
-                
-                // count used palette colors
-                Set<Integer> colors = new HashSet<>();
-                for (byte b : dbuf.getData()) {
-                    int idx = b & 0xFF;
-                    colors.add(tmpPalette[idx] & 0xFFFFFF);
+            // count used palette colors
+            Set<Integer> colors = new HashSet<>();
+            for (int x = 0; x < input.getWidth(); ++x) {
+                for (int y = 0; y < input.getHeight(); ++y) {
+                    int rgb = input.getRGB(x, y);
+                    colors.add(rgb & 0xFFFFFF);
                 }
+            }
 
-                if (colors.size() <= 16) {
-                    // this is an image with up to 16 colors, we can use this palette
-                    int i = 0;
-                    for(int rgb : colors) {
-                        setPaletteEntry(i++, rgb);
-                    }
+            // this is an image with up to 16 colors, we can use this palette
+            if (colors.size() <= 16) {
+                int i = 0;
+                for (int rgb : colors) {
+                    setPaletteEntry(i++, rgb);
                 }
             }
         }
